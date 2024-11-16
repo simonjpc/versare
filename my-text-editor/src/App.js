@@ -1,36 +1,41 @@
-import React, { useState } from 'react';
-import TextEditor from './components/TextEditor';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Sidebar from './components/Sidebar';
+import TextEditor from './components/TextEditor';
 
 function App() {
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [documentContent, setDocumentContent] = useState('');
 
-  const folderStructure = [
-    {
-      name: 'Folder 1',
-      documents: ['Document 1', 'Document 2'],
-    },
-    {
-      name: 'Folder 2',
-      documents: ['Document 3', 'Document 4'],
-    },
-    {
-      name: 'Folder 3',
-      documents: ['Document 5'],
-    },
-  ];
+  const handleSelectDocument = (docPath) => {
+    axios.get(`/file?path=${encodeURIComponent(docPath)}`)
+      .then(response => {
+        setSelectedDocument(docPath);
+        setDocumentContent(response.data.content);
+      })
+      .catch(err => console.error('Error fetching file:', err));
+  };
 
-  const handleSelectDocument = (doc) => {
-    alert(`Selected: ${doc}`);
-    setSelectedDocument(doc);
+  const handleSaveDocument = () => {
+    axios.post('/file', {
+      path: selectedDocument,
+      content: documentContent,
+    }).then(() => alert('File saved successfully'))
+      .catch(err => console.error('Error saving file:', err));
   };
 
   return (
     <div style={styles.container}>
-      <Sidebar folderStructure={folderStructure} onSelectDocument={handleSelectDocument} />
+      <Sidebar onSelectDocument={handleSelectDocument} />
       <div style={styles.editorContainer}>
         <h1>Versare</h1>
-        <TextEditor selectedDocument={selectedDocument} />
+        <TextEditor
+          content={documentContent}
+          onChange={(newContent) => setDocumentContent(newContent)}
+        />
+        <button onClick={handleSaveDocument} disabled={!selectedDocument}>
+          Save
+        </button>
       </div>
     </div>
   );

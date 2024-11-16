@@ -1,7 +1,19 @@
-// src/components/Sidebar.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from '../config/axios';
 
-const Sidebar = ({ folderStructure, onSelectDocument }) => {
+const Sidebar = ({ onSelectDocument }) => {
+  const [folderStructure, setFolderStructure] = useState([]);
+
+  useEffect(() => {
+    axios.get('/files')
+      .then(response => {
+        console.log('Response data:', response.data); // Log the data
+        setFolderStructure(response.data);
+      })
+      .catch(err => console.error('Error fetching files:', err));
+  }, []);
+  
+
   return (
     <div style={styles.sidebar}>
       {folderStructure.map((folder, index) => (
@@ -11,7 +23,7 @@ const Sidebar = ({ folderStructure, onSelectDocument }) => {
             <div
               key={i}
               style={styles.document}
-              onClick={() => onSelectDocument(doc)}
+              onClick={() => onSelectDocument(`${folder.name}/${doc}`)}
             >
               {doc}
             </div>
