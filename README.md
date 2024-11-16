@@ -1,2 +1,3 @@
 # versare
-Text Editor for non-tech users
+
+a text editor for non-tech users
