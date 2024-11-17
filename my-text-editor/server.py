@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, request, send_from_directory
 import os
+from retrieval import get_most_similar_chunks
+from generation import generate_answer
 
 from flask_cors import CORS
 
@@ -41,6 +43,19 @@ def save_file():
     with open(os.path.join(BASE_DIR, file_path), "w") as file:
         file.write(content)
     return "File saved successfully", 200
+
+
+@app.route("/api/call", methods=["POST"])
+def api_call():
+    data = request.json
+    text = data.get("text")
+    highlighted_text = data.get("highlightedText")
+    # send text to api call and get response
+    print("text:\n", text)
+    print("highlighted_text:\n", highlighted_text)
+    context = get_most_similar_chunks(text)
+    answer = generate_answer(highlighted_text, context)
+    return jsonify({"content": answer})
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ function App() {
     axios.get(`/file?path=${encodeURIComponent(docPath)}`)
       .then(response => {
         setSelectedDocument(docPath);
-        setDocumentContent(response.data.content);
+        setDocumentContent(response.data.content || ''); // Set content to an empty string if not available
       })
       .catch(err => console.error('Error fetching file:', err));
   };
