@@ -7,7 +7,7 @@ device = "mps" if torch.cuda.is_available() else "cpu"
 def generate_answer(query, context):
 
     model_name = "meta-llama/Llama-3.2-1B-Instruct"
-    token_id = "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"
+    token_id = ""
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, token=token_id)
     model = AutoModelForCausalLM.from_pretrained(
